@@ -5,7 +5,7 @@ export class Tank {
     x: number;
     y: number;
     bodyRotation: number;
-    turretRotation: number;
+    turretRotation: number = 0;
     speed: number;
     maxSpeed: number;
     rotationSpeed: number;

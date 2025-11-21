@@ -405,13 +405,13 @@ export class Game {
                 // Find nearest enemy
                 let nearestEnemy: Tank | null = null;
                 let minDist = 10000;
-                this.enemies.forEach(e => {
+                for (const e of this.enemies) {
                     const d = Math.sqrt((tank.x - e.x) ** 2 + (tank.y - e.y) ** 2);
                     if (d < minDist) {
                         minDist = d;
                         nearestEnemy = e;
                     }
-                });
+                }
 
                 if (nearestEnemy && minDist < 600) {
                     // Attack Enemy
