@@ -85,13 +85,13 @@ export class Game {
 
     async init() {
         await resourceManager.loadImages({
-            't34_hull': '/assets/t34_hull.png',
-            't34_turret': '/assets/t34_turret.png',
-            'tiger_hull': '/assets/tiger_hull.png',
-            'tiger_turret': '/assets/tiger_turret.png',
-            'grass': '/assets/grass_ground.png',
-            'crate': '/assets/wooden_crate.png',
-            'crew_gunner': '/assets/crew_gunner.png'
+            't34_hull': './assets/t34_hull.png',
+            't34_turret': './assets/t34_turret.png',
+            'tiger_hull': './assets/tiger_hull.png',
+            'tiger_turret': './assets/tiger_turret.png',
+            'grass': './assets/grass_ground.png',
+            'crate': './assets/wooden_crate.png',
+            'crew_gunner': './assets/crew_gunner.png'
         });
 
         this.backgroundImage = resourceManager.getImage('grass');
