@@ -32,18 +32,49 @@ export class Tank {
     lastMineTime: number = 0;
     mineCooldown: number = 5000;
 
+    // Weapon System
+    currentWeapon: 'cannon' | 'railgun' | 'missile' = 'cannon';
+
+    lastRailgunTime: number = 0;
+    railgunCooldown: number = 2000;
+
+    lastMissileTime: number = 0;
+    missileCooldown: number = 3000;
+
     health: number = 500;
     maxHealth: number = 500;
 
-    constructor(x: number, y: number, hullKey: string, turretKey: string) {
+    health: number = 500;
+    maxHealth: number = 500;
+    role: 'assault' | 'sniper' | 'demolisher';
+
+    constructor(x: number, y: number, hullKey: string, turretKey: string, role: 'assault' | 'sniper' | 'demolisher' = 'assault') {
+        this.role = role;
         this.x = x;
         this.y = y;
         this.bodyRotation = 0;
         this.speed = 0;
-        this.maxSpeed = 3; // Increased max speed
-        this.rotationSpeed = 0.15; // Much faster turning (was 0.1)
         this.width = 90;
         this.height = 120;
+
+        // Role Stats
+        if (this.role === 'assault') {
+            this.maxHealth = 500;
+            this.maxSpeed = 3;
+            this.currentWeapon = 'cannon';
+            this.rotationSpeed = 0.05;
+        } else if (this.role === 'sniper') {
+            this.maxHealth = 300;
+            this.maxSpeed = 5;
+            this.currentWeapon = 'railgun';
+            this.rotationSpeed = 0.07; // Faster turning for sniper
+        } else if (this.role === 'demolisher') {
+            this.maxHealth = 800;
+            this.maxSpeed = 2;
+            this.currentWeapon = 'missile';
+            this.rotationSpeed = 0.03; // Slower turning
+        }
+        this.health = this.maxHealth;
 
         this.hullImage = resourceManager.getImage(hullKey);
         this.turretImage = resourceManager.getImage(turretKey);
@@ -79,18 +110,48 @@ export class Tank {
         this.turretRotation = Math.atan2(dy, dx) + Math.PI / 2;
     }
 
+    switchWeapon() {
+        if (this.currentWeapon === 'cannon') this.currentWeapon = 'railgun';
+        else if (this.currentWeapon === 'railgun') this.currentWeapon = 'missile';
+        else this.currentWeapon = 'cannon';
+    }
+
     fire(): any { // Returns Bullet config or null
         const now = Date.now();
-        if (now - this.lastShotTime > this.fireRate) {
-            this.lastShotTime = now;
-            // Calculate barrel position
-            const barrelLen = 85; // Increased from 60 to clear the tank body/circle
-            return {
-                x: this.x + Math.cos(this.turretRotation - Math.PI / 2) * barrelLen,
-                y: this.y + Math.sin(this.turretRotation - Math.PI / 2) * barrelLen,
-                angle: this.turretRotation,
-                type: 'cannon'
-            };
+
+        if (this.currentWeapon === 'cannon') {
+            if (now - this.lastShotTime > this.fireRate) {
+                this.lastShotTime = now;
+                const barrelLen = 85;
+                return {
+                    x: this.x + Math.cos(this.turretRotation - Math.PI / 2) * barrelLen,
+                    y: this.y + Math.sin(this.turretRotation - Math.PI / 2) * barrelLen,
+                    angle: this.turretRotation,
+                    type: 'cannon'
+                };
+            }
+        } else if (this.currentWeapon === 'railgun') {
+            if (now - this.lastRailgunTime > this.railgunCooldown) {
+                this.lastRailgunTime = now;
+                const barrelLen = 90;
+                return {
+                    x: this.x + Math.cos(this.turretRotation - Math.PI / 2) * barrelLen,
+                    y: this.y + Math.sin(this.turretRotation - Math.PI / 2) * barrelLen,
+                    angle: this.turretRotation,
+                    type: 'railgun'
+                };
+            }
+        } else if (this.currentWeapon === 'missile') {
+            if (now - this.lastMissileTime > this.missileCooldown) {
+                this.lastMissileTime = now;
+                const barrelLen = 85;
+                return {
+                    x: this.x + Math.cos(this.turretRotation - Math.PI / 2) * barrelLen,
+                    y: this.y + Math.sin(this.turretRotation - Math.PI / 2) * barrelLen,
+                    angle: this.turretRotation,
+                    type: 'missile'
+                };
+            }
         }
         return null;
     }
